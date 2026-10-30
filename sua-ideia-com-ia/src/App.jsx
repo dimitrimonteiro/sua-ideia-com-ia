@@ -1,7 +1,7 @@
-import { Lightbulb, Brain, Hammer, Palette, Bug, Rocket, Code2, Store, Calculator, LayoutList, Globe, BookOpen, Sparkles, ListChecks, ClipboardCheck, Languages, CheckCircle2, Plus, Gift, ShieldCheck } from "lucide-react";
+import { Lightbulb, Brain, Hammer, Palette, Bug, Rocket, Code2, Store, Calculator, LayoutList, Globe, BookOpen, Sparkles, ListChecks, ClipboardCheck, Languages, CheckCircle2, Plus, Gift, ShieldCheck, AlertOctagon } from "lucide-react";
 import { useState } from "react";
 import { OFFER } from "./config";
-import { Reveal, BuyButton, Section, Title, Card, IconBox, Cover, Laptop, Phone, StickyMobileCTA } from "./ui";
+import { Reveal, BuyButton, Section, Title, Card, IconBox, Cover, Laptop, Phone, StickyMobileCTA, CountdownTimer } from "./ui";
 
 const problems = [
   { icon: Lightbulb, t: "Você tem uma ideia, mas não sabe desenvolver." },
@@ -65,22 +65,29 @@ function Faq({ q, a }) {
 
 export default function App() {
   return (
-    <main className="overflow-x-hidden pb-20 md:pb-0"> {/* Padding bottom extra no mobile por causa do sticky button */}
+    <main className="overflow-x-hidden pb-24 md:pb-0">
       <StickyMobileCTA />
       
       {/* HERO */}
-      <header className="relative px-5 pb-16 pt-10 sm:pt-20">
+      <header className="relative px-5 pb-16 pt-8 sm:pt-20">
         <div className="pointer-events-none absolute -left-40 -top-40 h-[480px] w-[480px] rounded-full bg-brand/20 blur-[140px]" />
-        <div className="pointer-events-none absolute -right-40 top-20 h-[480px] w-[480px] rounded-full bg-violet/20 blur-[140px]" />
         
-        {/* Ordem invertida no mobile para a imagem não empurrar o CTA pra baixo */}
         <div className="relative mx-auto flex max-w-6xl flex-col-reverse items-center gap-10 lg:grid lg:grid-cols-2 lg:gap-14">
           <div className="text-center lg:text-left z-10">
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs sm:text-sm font-semibold text-mist"><Sparkles className="h-4 w-4 text-violet" aria-hidden="true" />E-book prático em PDF</p>
+            {/* APELO INICIAL NO HERO */}
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-red-500/50 bg-red-500/10 px-4 py-2 text-xs sm:text-sm font-bold text-red-400">
+              <span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span></span>
+              ATENÇÃO: Oferta de lançamento encerrando
+            </div>
+            
             <h1 className="text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">Você tem uma ideia de site, mas não sabe por onde começar?</h1>
             <p className="mx-auto mt-4 max-w-xl text-base sm:text-lg leading-relaxed text-mist lg:mx-0">Aprenda a transformar ideias em sites e ferramentas digitais do zero, usando a IA como sua programadora.</p>
-            <p className="mt-4 inline-block bg-gradient-to-r from-brand to-violet bg-clip-text text-lg sm:text-xl font-extrabold text-transparent">Sem precisar de experiência técnica.</p>
-            <div className="mt-8 hidden md:block"><BuyButton>QUERO TIRAR MINHA IDEIA DO PAPEL</BuyButton></div>
+            <p className="mt-4 inline-block bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-xl font-extrabold text-transparent">Tudo isso sem nenhuma experiência técnica.</p>
+            
+            <div className="mt-8 hidden md:block">
+              <BuyButton>QUERO APROVEITAR O DESCONTO</BuyButton>
+              <p className="mt-3 text-sm text-red-400 font-medium">Restam poucas horas pelo preço de R$ 24,90</p>
+            </div>
           </div>
           
           <div className="relative mx-auto h-[280px] w-full max-w-[400px] sm:h-[440px] sm:max-w-[520px]" style={{ perspective: "1200px" }}>
@@ -99,7 +106,6 @@ export default function App() {
             <Reveal key={p.t} delay={i * 100}><Card className="h-full flex flex-col items-center text-center sm:items-start sm:text-left"><IconBox icon={p.icon} /><p className="text-base sm:text-lg font-bold leading-snug">{p.t}</p></Card></Reveal>
           ))}
         </div>
-        <Reveal><p className="mx-auto mt-10 sm:mt-14 max-w-2xl text-center text-xl sm:text-2xl font-extrabold leading-snug">E se você pudesse começar utilizando inteligência artificial como sua assistente?</p></Reveal>
       </Section>
 
       {/* SOLUÇÃO */}
@@ -109,7 +115,6 @@ export default function App() {
           <Reveal className="text-center lg:text-left">
             <h2 className="text-2xl font-extrabold tracking-tight sm:text-5xl">Conheça o Sua Ideia com IA</h2>
             <p className="mt-4 sm:mt-6 text-base sm:text-lg leading-relaxed text-mist">Um e-book que apresenta um caminho prático para transformar ideias em projetos digitais utilizando o Claude. Você aprende passo a passo, em linguagem simples, sem precisar de conhecimento técnico prévio.</p>
-            <div className="mt-8 hidden md:block"><BuyButton>QUERO CONHECER O E-BOOK</BuyButton></div>
           </Reveal>
         </div>
       </Section>
@@ -124,45 +129,38 @@ export default function App() {
         </div>
       </Section>
 
-      {/* PARA QUEM É */}
-      <Section className="bg-white/[0.03]">
-        <Reveal><Title>Para quem é?</Title></Reveal>
-        <div className="grid gap-5 md:grid-cols-2">
-          <Reveal><Card className="h-full">
-            <h3 className="mb-4 sm:mb-5 text-lg sm:text-xl font-extrabold">É para você que:</h3>
-            <ul className="space-y-3 sm:space-y-4">{forYou.map((f) => <li key={f} className="flex gap-3 text-sm sm:text-base"><CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 shrink-0 text-brand" aria-hidden="true" /><span>{f}</span></li>)}</ul>
-          </Card></Reveal>
-          <Reveal delay={100}><Card className="flex h-full flex-col justify-center border-violet/40 bg-gradient-to-br from-brand/20 to-violet/20 text-center py-8">
-            <Code2 className="mx-auto mb-3 h-8 w-8 sm:h-10 sm:w-10" aria-hidden="true" />
-            <p className="text-xl sm:text-2xl font-extrabold">Não é necessário ter experiência em programação.</p>
-          </Card></Reveal>
-        </div>
-      </Section>
-
-      {/* OFERTA */}
+      {/* OFERTA - AGRESSIVA */}
       <Section id="oferta">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[2rem] border-2 border-violet/50 bg-gradient-to-br from-brand/20 via-navy to-violet/25 p-6 shadow-[0_0_50px_-12px_rgba(124,58,237,0.4)] sm:p-12">
-            {/* Tag de destaque visual */}
-            <div className="absolute top-0 right-0 rounded-bl-2xl bg-gradient-to-r from-brand to-violet px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-glow">Oferta Especial</div>
+          {/* Caixa de alerta e urgência */}
+          <div className="mx-auto max-w-4xl text-center mb-8">
+            <AlertOctagon className="w-12 h-12 text-red-500 mx-auto mb-4 animate-pulse" />
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-4">Você vai perder a chance de criar seu site por <span className="text-red-500">causa de 24 reais?</span></h2>
+            <p className="text-lg text-mist mb-6">O valor original deste material é <span className="line-through text-white font-bold">R$ 100,00</span>. Mas para incentivar sua primeira ação hoje, liberamos um desconto temporário brutal.</p>
+            <p className="text-xl font-bold text-red-400 mb-4 uppercase tracking-wider">A oferta sai do ar em:</p>
+            <CountdownTimer minutes={15} />
+          </div>
+
+          <div className="relative overflow-hidden rounded-[2rem] border-4 border-red-600 bg-[#14060b] p-6 shadow-[0_0_60px_-15px_rgba(239,68,68,0.4)] sm:p-12 mt-10">
+            <div className="absolute top-0 right-0 rounded-bl-2xl bg-red-600 px-6 py-2 text-sm font-black uppercase tracking-wider text-white shadow-glow animate-pulse">75% OFF</div>
             
-            <div className="grid items-center gap-8 md:grid-cols-[220px_1fr] mt-4 sm:mt-0">
+            <div className="grid items-center gap-8 md:grid-cols-[220px_1fr] mt-6 sm:mt-0">
               <div className="mx-auto w-32 sm:w-44 md:w-full"><Cover /></div>
               <div className="text-center sm:text-left">
-                <h2 className="text-2xl font-extrabold sm:text-4xl">Sua Ideia com IA</h2>
-                <p className="mt-1 text-sm sm:text-base text-mist">E-book digital em PDF</p>
+                <h2 className="text-3xl font-black sm:text-4xl">Sua Ideia com IA</h2>
+                <p className="mt-1 text-sm sm:text-base text-red-400 font-bold">O acesso mais completo (E-book + Bônus)</p>
                 
-                <ul className="mt-5 grid gap-2 sm:grid-cols-2 text-left">{included.map((x) => <li key={x.t} className="flex items-center gap-2 text-xs sm:text-sm"><CheckCircle2 className="h-4 w-4 shrink-0 text-brand" aria-hidden="true" />{x.t}</li>)}</ul>
-                {OFFER.bonuses.length > 0 && <ul className="mt-4 space-y-2 text-left">{OFFER.bonuses.map((b) => <li key={b} className="flex items-center gap-2 text-xs sm:text-sm font-bold text-violet-300"><Gift className="h-4 w-4 shrink-0" aria-hidden="true" />{b}</li>)}</ul>}
+                <ul className="mt-5 grid gap-2 sm:grid-cols-2 text-left">{included.map((x) => <li key={x.t} className="flex items-center gap-2 text-xs sm:text-sm"><CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" aria-hidden="true" />{x.t}</li>)}</ul>
+                {OFFER.bonuses.length > 0 && <ul className="mt-4 space-y-2 text-left">{OFFER.bonuses.map((b) => <li key={b} className="flex items-center gap-2 text-xs sm:text-sm font-bold text-green-400"><Gift className="h-4 w-4 shrink-0" aria-hidden="true" />BÔNUS: {b}</li>)}</ul>}
                 
-                <div className="mt-6 sm:mt-8 rounded-2xl bg-white/5 p-4 border border-white/10">
-                  {OFFER.oldPrice && <p className="text-sm text-mist line-through mb-1">{OFFER.oldPrice}</p>}
-                  <p className="text-3xl sm:text-5xl font-extrabold bg-gradient-to-r from-white to-mist bg-clip-text text-transparent">{OFFER.price || "Preço a definir"}</p>
-                  {OFFER.paymentNote && <p className="text-xs sm:text-sm text-mist mt-1">{OFFER.paymentNote}</p>}
+                <div className="mt-8 rounded-2xl bg-red-950/40 p-5 border border-red-500/20">
+                  <p className="text-lg text-mist mb-1">De <span className="line-through decoration-red-500 decoration-2 font-bold">{OFFER.oldPrice}</span> por apenas:</p>
+                  <p className="text-5xl sm:text-6xl font-black text-white tracking-tighter">{OFFER.price}</p>
+                  {OFFER.paymentNote && <p className="text-sm text-green-400 font-bold mt-2 uppercase tracking-wide">{OFFER.paymentNote}</p>}
                 </div>
                 
-                <div className="mt-6 hidden md:block"><BuyButton className="w-full">QUERO O MEU E-BOOK AGORA</BuyButton></div>
-                {OFFER.guarantee && <p className="mt-4 flex items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm text-mist"><ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 shrink-0 text-brand" aria-hidden="true" />{OFFER.guarantee}</p>}
+                <div className="mt-6 hidden md:block"><BuyButton className="w-full">SIM! QUERO GARANTIR MEU ACESSO AGORA</BuyButton></div>
+                {OFFER.guarantee && <p className="mt-4 flex items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm text-mist"><ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 shrink-0 text-green-500" aria-hidden="true" />{OFFER.guarantee}</p>}
               </div>
             </div>
           </div>
@@ -175,7 +173,7 @@ export default function App() {
         <div className="mx-auto max-w-3xl">{faqs.map(([q, a]) => <Faq key={q} q={q} a={a} />)}</div>
       </Section>
 
-      <footer className="border-t border-white/10 px-5 pb-24 pt-8 sm:pb-8 text-center text-xs sm:text-sm text-mist">
+      <footer className="border-t border-white/10 px-5 pb-32 pt-8 sm:pb-8 text-center text-xs sm:text-sm text-mist">
         &copy; {new Date().getFullYear()} Sua Ideia com IA. Todos os direitos reservados.
       </footer>
     </main>
