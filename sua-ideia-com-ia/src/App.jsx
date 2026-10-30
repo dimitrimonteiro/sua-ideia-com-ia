@@ -84,7 +84,8 @@ export default function App() {
             <p className="mx-auto mt-4 max-w-xl text-base sm:text-lg leading-relaxed text-mist lg:mx-0">Aprenda a transformar ideias em sites e ferramentas digitais do zero, usando a IA como sua programadora.</p>
             <p className="mt-4 inline-block bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-xl font-extrabold text-transparent">Tudo isso sem nenhuma experiência técnica.</p>
             
-            <div className="mt-8 hidden md:block">
+            {/* Removido o hidden md:block para aparecer no mobile */}
+            <div className="mt-8">
               <BuyButton>QUERO APROVEITAR O DESCONTO</BuyButton>
               <p className="mt-3 text-sm text-red-400 font-medium">Restam poucas horas pelo preço de R$ 24,90</p>
             </div>
@@ -159,7 +160,9 @@ export default function App() {
                   {OFFER.paymentNote && <p className="text-sm text-green-400 font-bold mt-2 uppercase tracking-wide">{OFFER.paymentNote}</p>}
                 </div>
                 
-                <div className="mt-6 hidden md:block"><BuyButton className="w-full">SIM! QUERO GARANTIR MEU ACESSO AGORA</BuyButton></div>
+                {/* Removido o hidden md:block para aparecer no mobile */}
+                <div className="mt-6"><BuyButton className="w-full">SIM! QUERO GARANTIR MEU ACESSO AGORA</BuyButton></div>
+                
                 {OFFER.guarantee && <p className="mt-4 flex items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm text-mist"><ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 shrink-0 text-green-500" aria-hidden="true" />{OFFER.guarantee}</p>}
               </div>
             </div>
