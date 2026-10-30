@@ -1,6 +1,6 @@
-import { Lightbulb, Brain, Hammer, Palette, Bug, Rocket, Code2, HelpCircle, Store, Calculator, LayoutList, Globe, BookOpen, Sparkles, ListChecks, ClipboardCheck, Languages, CheckCircle2, Plus, Gift, ShieldCheck } from "lucide-react";
-import { useState } from "react";
-import { OFFER } from "./config";
+import { Lightbulb, Brain, Hammer, Palette, Bug, Rocket, Code2, HelpCircle, Store, Calculator, LayoutList, Globe, BookOpen, Sparkles, ListChecks, ClipboardCheck, Languages, CheckCircle2, Plus, Gift, ShieldCheck, X, Clock, Flame } from "lucide-react";
+import { useState, useEffect } from "react";
+import { OFFER, CHECKOUT_URL } from "./config";
 import { Reveal, BuyButton, Section, Title, Card, IconBox, Cover, Laptop, Phone } from "./ui";
 
 const problems = [
@@ -45,6 +45,91 @@ const faqs = [
   ["Como recebo o produto?", "O acesso é digital, após a confirmação da compra, conforme a entrega configurada na plataforma."],
 ];
 
+// ===== PROMOÇÃO (edite aqui) =====
+const PRECO_ANTIGO = "R$ 100";
+const PRECO_PROMO = "R$ 24,90";
+const PROMO_HORAS = 5; // duração do contador, contada a partir da 1ª visita de cada pessoa
+
+function useCountdown(hours) {
+  const [left, setLeft] = useState(hours * 3600000);
+  useEffect(() => {
+    let end = 0;
+    try { end = Number(localStorage.getItem("promo_end")) || 0; } catch {}
+    if (!end) { end = Date.now() + hours * 3600000; try { localStorage.setItem("promo_end", String(end)); } catch {} }
+    const tick = () => setLeft(Math.max(0, end - Date.now()));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [hours]);
+  return left;
+}
+const fmt = (ms) => {
+  const t = Math.floor(ms / 1000), p = (n) => String(n).padStart(2, "0");
+  return [Math.floor(t / 3600), Math.floor((t % 3600) / 60), t % 60].map(p);
+};
+
+function Timer({ left, big = false }) {
+  const [h, m, sec] = fmt(left);
+  return (
+    <div role="timer" aria-live="off" className="flex items-center justify-center gap-2">
+      {[[h, "horas"], [m, "min"], [sec, "seg"]].map(([v, l], i) => (
+        <div key={l} className="flex items-center gap-2">
+          <div className={`rounded-xl bg-black text-center font-extrabold tabular-nums text-yellow-300 ring-2 ring-yellow-400 ${big ? "px-4 py-3 text-4xl sm:text-5xl" : "px-2 py-1 text-lg"}`}>
+            {v}<span className={`block font-bold text-white/70 ${big ? "text-xs" : "text-[9px] leading-none"}`}>{l}</span>
+          </div>
+          {i < 2 && <span className={`font-extrabold text-yellow-300 ${big ? "text-3xl" : "text-lg"}`}>:</span>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TopBar({ left }) {
+  if (left <= 0) return null;
+  return (
+    <a href="#oferta" className="sticky top-0 z-50 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 px-4 py-2 text-center text-sm font-extrabold text-black shadow-lg">
+      <span className="flex items-center gap-1"><Flame className="h-4 w-4" aria-hidden="true" />PROMOÇÃO ÚNICA: de {PRECO_ANTIGO} por {PRECO_PROMO}</span>
+      <Timer left={left} />
+    </a>
+  );
+}
+
+function PromoBox({ left }) {
+  const active = left > 0;
+  return (
+    <div className="mt-7 rounded-3xl border-4 border-yellow-400 bg-gradient-to-b from-red-600/30 to-black/40 p-6 text-center shadow-[0_0_50px_rgba(250,204,21,.45)]">
+      {active ? (
+        <>
+          <p className="inline-flex items-center gap-2 rounded-full bg-red-600 px-4 py-1 text-sm font-extrabold animate-pulse"><Flame className="h-4 w-4" aria-hidden="true" />PROMOÇÃO ÚNICA, SÓ HOJE</p>
+          <p className="mt-4 text-sm font-bold text-white/70">De:</p>
+          <div className="relative mx-auto inline-block px-6">
+            <span className="text-5xl font-extrabold text-white/50 sm:text-6xl">{PRECO_ANTIGO}</span>
+            <X className="absolute inset-0 m-auto h-full w-full text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,.9)]" strokeWidth={5} aria-label="preço riscado" />
+          </div>
+          <p className="mt-3 text-sm font-bold uppercase text-yellow-300">Por apenas</p>
+          <p className="bg-gradient-to-b from-yellow-200 to-yellow-400 bg-clip-text text-6xl font-extrabold text-transparent sm:text-7xl">{PRECO_PROMO}</p>
+          {OFFER.paymentNote && <p className="text-white/80">{OFFER.paymentNote}</p>}
+          <p className="mb-3 mt-5 flex items-center justify-center gap-2 text-sm font-extrabold text-yellow-300"><Clock className="h-4 w-4" aria-hidden="true" />A OFERTA ACABA EM:</p>
+          <Timer left={left} big />
+        </>
+      ) : (
+        <>
+          <p className="inline-block rounded-full bg-white/10 px-4 py-1 text-sm font-extrabold">PROMOÇÃO ENCERRADA</p>
+          <p className="mt-4 text-5xl font-extrabold sm:text-6xl">{PRECO_ANTIGO}</p>
+        </>
+      )}
+    </div>
+  );
+}
+
+function PromoButton({ children }) {
+  return (
+    <a href={CHECKOUT_URL} className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-b from-green-400 to-green-600 px-6 py-5 text-center text-lg font-extrabold text-black shadow-[0_0_35px_rgba(74,222,128,.7)] ring-4 ring-yellow-300 transition hover:scale-[1.03] focus:outline-none focus-visible:ring-white animate-pulse sm:text-xl">
+      {children}
+    </a>
+  );
+}
+
 function Faq({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
@@ -58,8 +143,10 @@ function Faq({ q, a }) {
 }
 
 export default function App() {
+  const left = useCountdown(PROMO_HORAS);
   return (
     <main className="overflow-x-hidden">
+      <TopBar left={left} />
       {/* HERO */}
       <header className="relative px-5 pb-20 pt-12 sm:pt-20">
         <div className="pointer-events-none absolute -left-40 -top-40 h-[480px] w-[480px] rounded-full bg-brand/30 blur-[140px]" />
@@ -167,12 +254,8 @@ export default function App() {
                 <p className="mt-2 text-mist">E-book digital em PDF</p>
                 <ul className="mt-5 grid gap-2 sm:grid-cols-2">{included.map((x) => <li key={x.t} className="flex items-center gap-2 text-sm"><CheckCircle2 className="h-4 w-4 shrink-0 text-brand" aria-hidden="true" />{x.t}</li>)}</ul>
                 {OFFER.bonuses.length > 0 && <ul className="mt-5 space-y-2">{OFFER.bonuses.map((b) => <li key={b} className="flex items-center gap-2 text-sm font-bold"><Gift className="h-4 w-4 text-violet" aria-hidden="true" />{b}</li>)}</ul>}
-                <div className="mt-7">
-                  {OFFER.oldPrice && <p className="text-mist line-through">{OFFER.oldPrice}</p>}
-                  <p className="text-4xl font-extrabold">{OFFER.price || "Preço a definir"}</p>
-                  {OFFER.paymentNote && <p className="text-mist">{OFFER.paymentNote}</p>}
-                </div>
-                <div className="mt-6"><BuyButton className="w-full sm:w-auto">QUERO O MEU E-BOOK</BuyButton></div>
+                <PromoBox left={left} />
+                <PromoButton>{left > 0 ? "SIM! QUERO APROVEITAR POR " + PRECO_PROMO : "QUERO O MEU E-BOOK"}</PromoButton>
                 {OFFER.guarantee && <p className="mt-5 flex items-start gap-2 text-sm text-mist"><ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand" aria-hidden="true" />{OFFER.guarantee}</p>}
               </div>
             </div>
